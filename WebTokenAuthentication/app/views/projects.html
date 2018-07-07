@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>projects</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <style type="text/css">
+        label {
+            margin-top: 3%;
+        }
+         table, tbody, th, td {
+        border: 1px solid black;
+        padding:5px;
+        }
+    </style>
+</head>
+<body style="background-color: #FAFAFA" ng-controller="projectsController">
+        <div class="container" style="width: 500px">
+
+            <div class="card shadow p-3rounded" style="margin-top: 30%">
+                <div class="card-title bg-primary text-center">
+                    <h2 style="color: white;font-weight: bolder; padding: 10px">New Project</h2>
+                </div>
+                <div class="card-body">
+                    <form class="form-signin">
+                        <label for="exampleInputEmail1"><b>Name</b></label>
+                        <input type="text" class="form-control" ng-model="Val.Name">
+
+                        <label><b>Description</b></label>
+                        <input type="text" class="form-control" ng-model="Val.Description">
+
+
+                        <label><b>Due Date</b></label>
+                        <input type="text" class="form-control" id="datepicker" ng-model="Val.Due_date">
+                        <script>
+        $('#datepicker').datepicker({
+            uiLibrary: 'bootstrap4'
+        });
+                        </script>
+
+                        <label><b>Status</b></label>
+                        <input type="text" class="form-control" ng-model="Val.status">
+
+                        <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-top: 5%;" ng-click="AddProject(data)"><b>Submit</b></button>
+
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <table style="margin-left:20%;margin-top:30px;margin-bottom:30px">
+            <thead>
+                <tr>
+                    <td>Project ID</td>
+                    <td>Name</td>
+                    <td>Descritption</td>
+                    <td>Due Date</td>
+                    <td>status</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="project in Data">
+                    <td>{{ project.projectId }}</td>
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.description }}</td>
+                    <td>{{ project.due_date }}</td>
+                    <td>{{ project.status }}</td>
+                    <td><button ng-click="DeleteProject(project);">Delete</button></td>
+                <tr>
+            </tbody>
+        </table>
+
+        <script>
+    var app = angular.module( 'myApp' ,  []);
+    app.controller('projectsController', function ($scope, $http)
+    {
+
+        $scope.Val = {
+          Name: "",
+          Description: "",
+          Due_date: "",
+          status: ""
+        };
+
+        $scope.AddProject = function(data)
+        {
+            var info =
+                {
+                    Name: $scope.data.Name,
+                    Description: $scope.data.Description,
+                    Due_date: $scope.data.Due_date,
+                    status: $scope.data.status
+                }
+            $http.post("http://localhost:51514/api/Projects", info).then(function (response) {
+                console.log(response);
+            });
+        }
+
+
+        $http.get("http://localhost:51514/api/Projects").then(function (response) {
+            console.log(response);
+            debugger;
+            $scope.Data = response.data;
+        });
+
+
+        $scope.DeleteProject = function (data)
+        {
+            id = data.ProjectId;
+            $http.delete("http://localhost:51514/api/Projects/" + id).then(function (response)
+            {
+                console.log(response);
+            });
+
+
+        }
+
+
+
+    });
+        </script>
+</body>
+</html>
